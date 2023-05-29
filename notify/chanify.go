@@ -1,6 +1,8 @@
 package notify
 
 import (
+	"bytes"
+	"encoding/json"
 	"log"
 	"net/http"
 	"net/url"
@@ -30,19 +32,28 @@ func NewChanify(endpoint string, token string) *Chanify {
 	return c
 }
 
+type ChanifyMessage struct {
+	Title string `json:"title"`
+	Text  string `json:"text"`
+	Sound int    `json:"sound"`
+}
+
 func (c *Chanify) Send(title string, content string, sound bool) {
-	u := c.base.JoinPath(`/v1/sender`, c.token, content)
-	v := u.Query()
-	if title != `` {
-		v.Set(`title`, title)
+	u := c.base.JoinPath(`/v1/sender`, c.token)
+
+	m := ChanifyMessage{
+		Title: title,
+		Text:  content,
+		Sound: 1,
 	}
-	if sound {
-		v.Set(`sound`, `1`)
-	}
-	u.RawQuery = v.Encode()
-	rsp, err := http.Get(u.String())
+
+	b := bytes.NewBuffer(nil)
+	json.NewEncoder(b).Encode(m)
+
+	rsp, err := http.Post(u.String(), `application/json`, b)
 	if err != nil {
 		log.Println(err)
 	}
+
 	defer rsp.Body.Close()
 }

@@ -53,6 +53,7 @@ func (c *Chanify) Send(title string, content string, sound bool) {
 	rsp, err := http.Post(u.String(), `application/json`, b)
 	if err != nil {
 		log.Println(err)
+		return
 	}
 
 	defer rsp.Body.Close()

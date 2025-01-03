@@ -38,7 +38,7 @@ type ChanifyMessage struct {
 	Sound int    `json:"sound"`
 }
 
-func (c *Chanify) Send(title string, content string, sound bool) {
+func (c *Chanify) Send(title string, content string, sound bool) error {
 	u := c.base.JoinPath(`/v1/sender`, c.token)
 
 	m := ChanifyMessage{
@@ -53,8 +53,9 @@ func (c *Chanify) Send(title string, content string, sound bool) {
 	rsp, err := http.Post(u.String(), `application/json`, b)
 	if err != nil {
 		log.Println(err)
-		return
+		return err
 	}
 
 	defer rsp.Body.Close()
+	return nil
 }

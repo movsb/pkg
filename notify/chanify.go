@@ -55,7 +55,12 @@ func (c *Chanify) Send(title string, content string, sound bool) error {
 		log.Println(err)
 		return err
 	}
-
 	defer rsp.Body.Close()
+
+	if rsp.StatusCode < 200 || rsp.StatusCode >= 300 {
+		log.Println("Chanify error:", rsp.Status)
+		return err
+	}
+
 	return nil
 }

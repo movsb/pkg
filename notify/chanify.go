@@ -3,6 +3,7 @@ package notify
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -59,7 +60,7 @@ func (c *Chanify) Send(title string, content string, sound bool) error {
 
 	if rsp.StatusCode < 200 || rsp.StatusCode >= 300 {
 		log.Println("Chanify error:", rsp.Status)
-		return err
+		return fmt.Errorf(`chanify error: %d %s`, rsp.StatusCode, u.String())
 	}
 
 	return nil
